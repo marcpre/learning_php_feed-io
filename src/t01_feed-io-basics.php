@@ -10,13 +10,24 @@ $feedIo = \FeedIo\Factory::create()->getFeedIo();
 $url = 'https://www.reddit.com/r/worldnews/top.rss?t=day';
 $result = $feedIo->read($url);
 
-// or read a feed since a certain date
-$result = $feedIo->readSince($url, new \DateTime('-7 days'));
-
 // get title
 $feedTitle = $result->getFeed()->getTitle();
 
 // iterate through items
-foreach( $result->getFeed() as $item ) {
-    echo $item->getTitle();
+$html = "";
+$html .= "<ul>";
+$i = 0;
+foreach ($result->getFeed() as $item) {
+    $i++;
+    $title = $item->getTitle();
+    $desc = $item->getDescription();
+    preg_match_all('/<a(?=\s)(?=(?:[^>"\']|"[^"]*"|\'[^\']*\')*?\shref\s*=\s*(?:([\'"])((?:(?!\1|reddit\.com)[\S\s])+)\1))\s+(?:"[\S\s]*?"|\'[\S\s]*?\'|[^>]*?)+>/', $desc, $link);
+    $parsedUrl = parse_url($link[2][0]);
+    $root = $parsedUrl['host'];
+    $html .= "<li>" . $title . " (Source: <a href=' " . $link[2][0] . " ' target='_blank' > " . $root . "</a>)</li>";
+    if ($i > 5) break;
 }
+
+$html .= "</ul>";
+
+print_r($html);
