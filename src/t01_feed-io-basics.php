@@ -10,9 +10,6 @@ $feedIo = \FeedIo\Factory::create()->getFeedIo();
 $url = 'https://www.reddit.com/r/worldnews/top.rss?t=day';
 $result = $feedIo->read($url);
 
-// get title
-$feedTitle = $result->getFeed()->getTitle();
-
 // iterate through items
 $html = "";
 $html .= "<ul>";
